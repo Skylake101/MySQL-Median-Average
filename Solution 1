@@ -1,0 +1,20 @@
+select e1.name,
+-- Median statement below
+(SELECT AVG(weight) FROM
+( SELECT x.id, x.weight from burrito x, burrito y
+WHERE x.cooked_by_employee_id = e3.id AND
+y.cooked_by_employee_id = e3.id
+/*Where statement limits median to only end of line supervisors;
+rather than all weights in the column*/
+GROUP BY x.id, x.weight
+HAVING SUM(SIGN(1-SIGN(IF(y.weight-x.weight=0 AND x.id != y.id,
+SIGN(x.id-y.id), y.weight-x.weight)))) IN (ROUND((COUNT(*))/2),
+ROUND((COUNT(*)+1)/2))
+) sq) AS Median
+-- End Median declaration
+FROM
+employees e1, employees e2, employees e3
+-- Add hierarchy levels by duplicating, change e3->_
+WHERE
+e1.id = e2.supervisor_id
+AND e2.id = e3.supervisor_id
