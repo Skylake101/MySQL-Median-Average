@@ -1,0 +1,16 @@
+/* Install SQL statistical functions from:
+http://www.xarg.org/2012/07/statistical-functions-in-mysql/ */
+SELECT
+T.name, median(Buri.weight)
+FROM burrito Buri
+JOIN employees B ON Buri.Cooked_by_employee_id = B.id
+JOIN employees M ON B.supervisor_id = M.id
+JOIN employees T ON M.supervisor_id = T.id
+GROUP BY cooked_by_employee_id;
+By using object-oriented programming (like Python) you could add a recursive loop to
+automatically accommodate infinite levels of managers :)
+The pseudocode is:
+x = cooked_by_chef_id
+If( x != null){
+Select row employee.id(x)
+x = supervisor.id}
